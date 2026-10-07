@@ -3,87 +3,326 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BJS 数据接力 · 控制台</title>
+<title>BJS 数据接力控制台</title>
 <style>
+:root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-900: #1a1a1a;
+    --gray-600: #6b6b6b;
+    --gray-400: #a3a3a3;
+    --gray-200: #e4e4e4;
+    --gray-100: #f6f6f6;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #f0f4f8; font-family: "Microsoft YaHei", Arial, sans-serif;
-       color: #1a3a5c; padding: 20px; }
-.container { max-width: 1180px; margin: 0 auto; background: rgba(255,255,255,0.92);
-             backdrop-filter: blur(8px); border-radius: 28px; padding: 25px 30px;
-             box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
-h1 { font-size: 28px; border-bottom: 3px solid #2b6f9e; padding-bottom: 8px;
-     display: flex; justify-content: space-between; align-items: center; }
-h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
-.sub { color: #4a6a8a; margin-bottom: 20px; font-size: 14px;
-       border-left: 4px solid #2b6f9e; padding-left: 12px; }
-.card { background: #fff; border-radius: 16px; padding: 16px 20px;
-        margin-bottom: 18px; border: 1px solid #e2eaf2; }
-.card h3 { display: flex; gap: 8px; align-items: center; font-size: 17px;
-           margin-bottom: 10px; }
-.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
-.row label { min-width: 70px; font-weight: 500; color: #4a6a8a; font-size: 14px; }
-.row input, .row select, .row textarea { flex: 1; padding: 8px 12px;
-    border: 1px solid #d8e2ed; border-radius: 8px; background: #fafcff;
-    font-size: 14px; outline: none; font-family: inherit; }
-.row input:focus, .row select:focus, .row textarea:focus {
-    border-color: #2b6f9e; box-shadow: 0 0 0 3px rgba(43,111,158,0.15); }
-.btn { padding: 8px 20px; border: none; border-radius: 10px; font-weight: 600;
-       cursor: pointer; transition: 0.2s; background: #e8edf4; color: #1a3a5c; }
-.btn:hover:not(:disabled) { transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed;
-    transform: none !important; box-shadow: none !important; }
-.btn-primary { background: #2b6f9e; color: #fff; }
-.btn-primary:hover:not(:disabled) { background: #1f5a83; }
-.btn-success { background: #1f8b4c; color: #fff; }
-.btn-success:hover:not(:disabled) { background: #16733e; }
-.btn-warning { background: #d48c2c; color: #fff; }
-.btn-warning:hover:not(:disabled) { background: #b87720; }
-.btn-purple { background: #8e44ad; color: #fff; }
-.btn-purple:hover:not(:disabled) { background: #7d3c98; }
-.btn-danger { background: #c0392b; color: #fff; }
-.btn-danger:hover:not(:disabled) { background: #a93226; }
-.btn-sm { padding: 4px 12px; font-size: 12px; }
-.preset-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.preset-btn { background: #eef3f8; border: 1px solid #d8e2ed; border-radius: 20px;
-              padding: 2px 14px; font-size: 12px; cursor: pointer; color: #1f3b58; }
-.preset-btn:hover { background: #d8e2ed; }
-.result-box { margin-top: 10px; padding: 10px; background: #f8fafc;
-              border-radius: 8px; border-left: 4px solid #2b6f9e;
-              font-family: Consolas, monospace; font-size: 13px;
-              max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
-.log-viewer { background: #1a2a3e; color: #e8edf4; padding: 12px;
-              border-radius: 8px; max-height: 250px; overflow-y: auto;
-              font-family: Consolas, monospace; font-size: 12px; white-space: pre-wrap; }
-.status-bar { display: flex; justify-content: space-between; background: #f8fafc;
-              padding: 8px 16px; border-radius: 10px; border: 1px solid #e2eaf2;
-              margin-bottom: 20px; flex-wrap: wrap; align-items: center; gap: 10px; }
-.status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-.online { background: #1f8b4c; }
-.offline { background: #c0392b; }
-.license-badge { padding: 2px 12px; border-radius: 20px; font-size: 13px;
-                 font-weight: 600; background: #e8edf4; }
-.license-badge.valid { background: #d4edda; color: #155724; }
-.license-badge.invalid { background: #f8d7da; color: #721c24; }
-.file-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.file-table th { text-align: left; padding: 6px 12px;
-                 border-bottom: 2px solid #d8e2ed; color: #6a8aa8; }
-.file-table td { padding: 5px 12px; border-bottom: 1px solid #e2eaf2; }
-.file-table .dir { cursor: pointer; color: #2b6f9e; font-weight: 600; }
-.file-table .file { cursor: pointer; color: #2b6f9e; }
-.file-table .file:hover, .file-table .dir:hover { text-decoration: underline; }
-.advanced-section { border-top: 2px dashed #cbd7e6; margin-top: 10px; padding-top: 10px; }
-.advanced-section h2 { font-size: 20px; color: #2b6f9e;
-                       display: flex; align-items: center; gap: 10px; }
-.win-section { border-top: 2px dashed #f5c6a0; margin-top: 10px; padding-top: 10px; }
-.win-section h2 { font-size: 20px; color: #c47a1a;
-                  display: flex; align-items: center; gap: 10px; }
-.license-input-row { display: flex; gap: 8px; align-items: center;
-                     flex-wrap: wrap; margin: 10px 0; }
-.license-input-row input { flex: 1; min-width: 200px; }
+
+body {
+    background: var(--white);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 24px 96px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d0d0; border: 3px solid var(--white); }
+::-webkit-scrollbar-thumb:hover { background: var(--black); }
+
+.container { max-width: 1120px; margin: 0 auto; }
+
+h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+}
+h1 small {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray-600);
+    letter-spacing: 0.06em;
+    font-family: var(--mono);
+}
+
+.sub {
+    color: var(--gray-600);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin: 14px 0 32px;
+}
+
+/* ---------- 状态栏 ---------- */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+    color: var(--gray-600);
+}
+.status-bar > div { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    background: var(--gray-400);
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.online { background: var(--black); }
+.offline { background: var(--white); box-shadow: inset 0 0 0 1px var(--black); }
+
+.license-badge {
+    padding: 3px 10px;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    color: var(--gray-600);
+    display: inline-block;
+    vertical-align: middle;
+}
+.license-badge.valid { background: var(--black); color: var(--white); border-color: var(--black); }
+.license-badge.invalid { background: var(--white); color: var(--gray-600); }
+
+/* ---------- 卡片 ---------- */
+.card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    padding: 20px 24px;
+    margin-bottom: 14px;
+}
+.card.highlight { border-color: var(--black); }
+
+.card h3 {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+}
+
+/* ---------- 表单 ---------- */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.row:last-child { margin-bottom: 0; }
+.row label {
+    min-width: 70px;
+    font-size: 13px;
+    color: var(--gray-600);
+}
+
+input:not([type="checkbox"]),
+select,
+textarea {
+    padding: 9px 12px;
+    border: 1px solid var(--gray-200);
+    background-color: var(--white);
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--black);
+    border-radius: 0;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+input:not([type="checkbox"]):focus,
+select:focus,
+textarea:focus { border-color: var(--black); }
+
+input::placeholder, textarea::placeholder { color: var(--gray-400); }
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230a0a0a' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+textarea { resize: vertical; line-height: 1.55; }
+
+input[type="checkbox"] {
+    accent-color: var(--black);
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+.row input:not([type="checkbox"]),
+.row select,
+.row textarea { flex: 1; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+    padding: 9px 18px;
+    border: 1px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+    border-radius: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover:not(:disabled) { background: var(--black); color: var(--white); }
+.btn:disabled { opacity: 0.28; cursor: not-allowed; }
+
+.btn-primary,
+.btn-success,
+.btn-warning,
+.btn-purple,
+.btn-danger {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+.btn-primary:hover:not(:disabled),
+.btn-success:hover:not(:disabled),
+.btn-warning:hover:not(:disabled),
+.btn-purple:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
+    background: #3d3d3d;
+    border-color: #3d3d3d;
+    color: var(--white);
+}
+
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* ---------- 预设 ---------- */
+.preset-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.preset-btn {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--gray-600);
+    border-radius: 0;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+.preset-btn:hover { border-color: var(--black); color: var(--black); }
+
+/* ---------- 结果 / 日志 ---------- */
+.result-box {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: var(--gray-100);
+    border-left: 2px solid var(--black);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--gray-900);
+    max-height: 220px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.log-viewer {
+    background: var(--black);
+    color: #d9d9d9;
+    padding: 14px 16px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.log-viewer::-webkit-scrollbar-thumb { background: #4a4a4a; border: 3px solid var(--black); }
+.log-viewer::-webkit-scrollbar-thumb:hover { background: #8a8a8a; }
+
+/* ---------- 文件表格 ---------- */
+.file-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.file-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--black);
+}
+.file-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-900);
+}
+.file-table .dir,
+.file-table .file { cursor: pointer; color: var(--black); }
+.file-table .file { font-weight: 400; }
+.file-table .dir { font-weight: 600; }
+.file-table .file:hover,
+.file-table .dir:hover { text-decoration: underline; }
+
+/* ---------- 分区 ---------- */
+.advanced-section,
+.win-section {
+    border-top: 1px solid var(--black);
+    margin-top: 40px;
+    padding-top: 22px;
+}
+.advanced-section h2,
+.win-section h2 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+/* ---------- 卡密行 ---------- */
+.license-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 4px 0 12px;
+}
+.license-input-row input { flex: 1; min-width: 220px; }
+
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ---------- 响应式 ---------- */
 @media (max-width: 700px) {
-    .container { padding: 16px; }
+    body { padding: 28px 16px 64px; }
+    .card { padding: 16px; }
     .row { flex-direction: column; align-items: stretch; }
     .row label { min-width: auto; }
     .license-input-row { flex-direction: column; align-items: stretch; }
@@ -93,33 +332,33 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
 </head>
 <body>
 <div class="container">
-    <h1>🔗 BJS 数据接力 <small>v6.0.4</small></h1>
-    <div class="sub">HXZXS · Windows 优先</div>
+    <h1>BJS 数据接力 <small>v6.0.4</small></h1>
+    <div class="sub">HXZXS</div>
 
     <div class="status-bar">
         <div><span class="status-dot" id="statusDot"></span>
             <span id="statusText">检测中...</span></div>
         <div>
-            <span class="license-badge invalid" id="licenseBadge">⚪ 标准版</span>
+            <span class="license-badge invalid" id="licenseBadge">标准版</span>
             <button class="btn btn-sm btn-primary" onclick="checkHealth()">🔄 刷新</button>
-            <button class="btn btn-sm btn-success" onclick="refreshLicense()">🔒 刷新授权</button>
+            <button class="btn btn-sm btn-success" onclick="refreshLicense()">刷新授权</button>
         </div>
     </div>
 
     <!-- 卡密 -->
-    <div class="card" style="border:2px solid #2b6f9e; background:#f0f7fe;">
+    <div class="card highlight">
         <h3>🔑 升级至高级版</h3>
         <div class="license-input-row">
             <input type="text" id="licenseKeyInput" placeholder="请输入卡密">
             <button class="btn btn-success" onclick="verifyLicense()">验证卡密</button>
-            <span id="licenseMsg" style="font-size:14px; color:#666;"></span>
+            <span id="licenseMsg" style="font-size:13px; color:#6b6b6b;"></span>
         </div>
-        <div style="font-size:13px; color:#6a8aa8;">标准版功能免费，高级功能需卡密激活。</div>
+        <div style="font-size:13px; color:#6b6b6b;">标准版功能免费，高级功能需卡密激活。</div>
     </div>
 
     <!-- ====== 基础功能 ====== -->
     <div class="card">
-        <h3>📂 打开路径</h3>
+        <h3>打开路径</h3>
         <div class="row">
             <label>路径</label>
             <input type="text" id="pathInput" value="C:\">
@@ -133,7 +372,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>💬 弹窗</h3>
+        <h3>弹窗</h3>
         <div class="row">
             <label>内容</label>
             <input type="text" id="msgText" value="Hello from BJS!">
@@ -162,7 +401,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>🖼️ 图片弹窗</h3>
+        <h3>图片弹窗</h3>
         <div class="row">
             <label>图片地址</label>
             <input type="text" id="imgUrl" value="https://www.python.org/static/img/python-logo.png">
@@ -181,7 +420,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>🚀 运行程序</h3>
+        <h3>运行程序</h3>
         <div class="row">
             <label>路径</label>
             <input type="text" id="runPath" value="C:\Windows\System32\notepad.exe">
@@ -202,7 +441,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>🧩 自定义对话框</h3>
+        <h3>自定义对话框</h3>
         <div class="row">
             <label>JSON配置</label>
             <textarea id="dialogConfig" rows="5">{
@@ -229,20 +468,20 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
 
     <!-- ====== 文件操作 ====== -->
     <div class="card">
-        <h3>📂 文件浏览器</h3>
+        <h3>文件浏览器</h3>
         <div class="row">
             <input type="text" id="browsePath" value="C:\">
             <button class="btn btn-primary" onclick="browse()">浏览</button>
         </div>
-        <div id="fileList"><p style="color:#6a8aa8;">点击浏览加载</p></div>
-        <div id="fileContent" style="display:none; margin-top:10px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong id="fileContentTitle">文件内容</strong>
+        <div id="fileList"><p style="color:#6b6b6b;">点击浏览加载</p></div>
+        <div id="fileContent" style="display:none; margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong id="fileContentTitle" style="font-size:13px; font-weight:600;">文件内容</strong>
                 <button class="btn btn-sm" onclick="document.getElementById('fileContent').style.display='none'">关闭</button>
             </div>
             <div class="log-viewer" id="fileContentText"></div>
         </div>
-        <div class="row" style="margin-top:8px;">
+        <div class="row" style="margin-top:12px;">
             <button class="btn btn-sm btn-success" onclick="mkdir()">新建文件夹</button>
             <button class="btn btn-sm btn-primary" onclick="renameSelected()">重命名</button>
             <button class="btn btn-sm btn-danger" onclick="delSelected()">删除</button>
@@ -253,7 +492,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>✍️ 写入文件</h3>
+        <h3>写入文件</h3>
         <div class="row">
             <label>路径</label>
             <input type="text" id="writePath" value="C:\test\hello.txt">
@@ -276,7 +515,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>🔎 文本替换</h3>
+        <h3>查找替换</h3>
         <div class="row">
             <label>文件路径</label>
             <input type="text" id="replacePath" value="C:\test\config.ini">
@@ -299,7 +538,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
     </div>
 
     <div class="card">
-        <h3>📊 文件/目录信息</h3>
+        <h3>文件/目录信息</h3>
         <div class="row">
             <label>路径</label>
             <input type="text" id="infoPath" value="C:\test">
@@ -311,10 +550,10 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
 
     <!-- ====== Windows 优化 ====== -->
     <div class="win-section">
-        <h2>🪟 Windows 专属功能</h2>
+        <h2>Windows 专属功能</h2>
 
         <div class="card" style="margin-top:10px;">
-            <h3>🔖 文件属性（隐藏/只读/系统/归档）</h3>
+            <h3>文件属性（隐藏/只读/系统/归档）</h3>
             <div class="row">
                 <label>路径</label>
                 <input type="text" id="attrPath" value="C:\test\secret.txt">
@@ -330,7 +569,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
         </div>
 
         <div class="card">
-            <h3>🔔 系统通知</h3>
+            <h3>托盘通知</h3>
             <div class="row">
                 <label>标题</label>
                 <input type="text" id="notifyTitle" value="BJS 数据接力">
@@ -347,11 +586,11 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
 
     <!-- ====== 高级功能 ====== -->
     <div class="advanced-section">
-        <h2>⭐ 高级功能 <span id="advStatus" style="font-size:14px; color:#6a8aa8;">(标准版)</span></h2>
+        <h2>💎 高级功能 <span id="advStatus" style="font-size:13px; font-weight:400; color:#6b6b6b;">(标准版)</span></h2>
         <div style="margin-top:10px;">
 
             <div class="card">
-                <h3>📝 批量重命名</h3>
+                <h3>批量重命名</h3>
                 <div class="row">
                     <label>目录</label>
                     <input type="text" id="renamePath" value="C:\test">
@@ -370,7 +609,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🔄 目录同步</h3>
+                <h3>目录同步</h3>
                 <div class="row">
                     <label>源</label>
                     <input type="text" id="syncSrc" value="C:\source">
@@ -392,7 +631,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>⏰ 定时任务</h3>
+                <h3>定时任务</h3>
                 <div class="row">
                     <label>名称</label>
                     <input type="text" id="scheduleName" value="每日备份">
@@ -407,7 +646,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>📋 剪贴板历史</h3>
+                <h3>剪贴板历史</h3>
                 <div class="row">
                     <label>条数</label>
                     <input type="number" id="clipLimit" value="10" style="flex:0.3;">
@@ -418,7 +657,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>👁️ 文件监听</h3>
+                <h3>文件监听</h3>
                 <div class="row">
                     <label>目录</label>
                     <input type="text" id="watchPath" value="C:\incoming">
@@ -438,7 +677,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🔍 全文搜索</h3>
+                <h3>全文搜索</h3>
                 <div class="row">
                     <label>目录</label>
                     <input type="text" id="searchPath" value="C:\documents">
@@ -454,7 +693,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>📜 版本历史</h3>
+                <h3>版本历史</h3>
                 <div class="row">
                     <label>文件</label>
                     <input type="text" id="versionPath" value="C:\work\report.docx">
@@ -464,7 +703,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🔁 重复文件查找</h3>
+                <h3>重复文件查找</h3>
                 <div class="row">
                     <label>目录</label>
                     <input type="text" id="dupPath" value="C:\downloads">
@@ -478,7 +717,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>📦 压缩包管理</h3>
+                <h3>压缩包管理</h3>
                 <div class="row">
                     <label>解压文件</label>
                     <input type="text" id="archiveFile" value="C:\files.zip">
@@ -498,7 +737,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🌐 局域网分享</h3>
+                <h3>局域网分享</h3>
                 <div class="row">
                     <label>路径</label>
                     <input type="text" id="sharePath" value="C:\share">
@@ -522,7 +761,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🆘 远程协助</h3>
+                <h3>远程协助</h3>
                 <div class="row">
                     <label>有效期(秒)</label>
                     <input type="number" id="remoteExpire" value="300" style="flex:0.3;">
@@ -532,7 +771,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>📱 多设备同步</h3>
+                <h3>多设备同步</h3>
                 <div class="row">
                     <label>设备ID</label>
                     <input type="text" id="deviceId" value="laptop-001">
@@ -566,7 +805,7 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
             </div>
 
             <div class="card">
-                <h3>🧾 自定义脚本</h3>
+                <h3>自定义脚本</h3>
                 <div class="row">
                     <label>脚本</label>
                     <textarea id="scriptContent" rows="3">print('Hello from BJS')</textarea>
@@ -581,8 +820,8 @@ h1 small { font-size: 16px; font-weight: 400; color: #6a8aa8; }
         </div>
     </div>
 
-    <div class="card">
-        <h3>📜 运行日志</h3>
+    <div class="card" style="margin-top:32px;">
+        <h3>运行日志</h3>
         <div class="row">
             <button class="btn btn-sm" onclick="fetchLog()">刷新</button>
             <label>行数</label>
@@ -631,11 +870,11 @@ async function refreshLicense() {
             const advStatus = $('advStatus');
             if (licenseValid) {
                 badge.className = 'license-badge valid';
-                badge.textContent = '✅ 高级版 (已激活)';
+                badge.textContent = '高级版 (已激活)';
                 advStatus.textContent = '(已授权)';
             } else {
                 badge.className = 'license-badge invalid';
-                badge.textContent = '⚪ 标准版';
+                badge.textContent = '标准版';
                 advStatus.textContent = '(标准版)';
             }
             setAdvancedButtons(licenseValid);
@@ -771,7 +1010,7 @@ async function browse() {
     const res = await callApi('GET', `/api/listdir?path=${encodeURIComponent(path)}`);
     const container = $('fileList');
     if (res.code !== 0) {
-        container.innerHTML = `<p style="color:red;">加载失败: ${res.msg}</p>`;
+        container.innerHTML = `<p style="color:#0a0a0a; font-weight:600;">加载失败: ${res.msg}</p>`;
         return;
     }
     let html = '<table class="file-table"><thead><tr><th>名称</th><th>大小</th><th>修改时间</th><th>操作</th></tr></thead><tbody>';
